@@ -1,0 +1,73 @@
+// Define Ultrasonic Sensor Pins
+const int trigPin = 11;
+const int echoPin = 10;
+
+// Define Motor Driver Pins
+const int m1 = 9;  // Motor 1 Forward
+const int m2 = 8;  // Motor 1 Backward
+const int m3 = 7;  // Motor 2 Forward
+const int m4 = 6;  // Motor 2 Backward
+
+// Variables for distance measurement
+long duration;
+int distance;
+
+void setup() {
+    pinMode(trigPin, OUTPUT);
+    pinMode(echoPin, INPUT);
+    
+    pinMode(m1, OUTPUT);
+    pinMode(m2, OUTPUT);
+    pinMode(m3, OUTPUT);
+    pinMode(m4, OUTPUT);
+    
+    Serial.begin(9600);
+}
+
+void loop() {
+    // Measure Distance
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(2);
+    digitalWrite(trigPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigPin, LOW);
+    
+    duration = pulseIn(echoPin, HIGH);
+    distance = duration * 0.034 / 2;  // Convert time to distance in cm
+    
+    Serial.print("Distance in cm: ");
+    Serial.println(distance);
+
+    // Motor Control Based on Distance
+    if (distance < 20) {
+        stopMotors();  // Stop before reversing
+        delay(50);    // Small pause
+        moveBackward();
+    } else {
+        moveForward();
+    }
+}
+
+// Function to move forward
+void moveForward() {
+    digitalWrite(m1, HIGH);
+    digitalWrite(m2, LOW);
+    digitalWrite(m3, HIGH);
+    digitalWrite(m4, LOW);
+}
+
+// Function to move backward
+void moveBackward() {
+    digitalWrite(m1, HIGH);
+    digitalWrite(m2, LOW);
+    digitalWrite(m3, LOW);
+    digitalWrite(m4, HIGH);
+}
+
+// Function to stop motors
+void stopMotors() {
+    digitalWrite(m1, LOW);
+    digitalWrite(m2, LOW);
+    digitalWrite(m3, LOW);
+    digitalWrite(m4, LOW);
+}
